@@ -25,7 +25,7 @@
             <p>Create a canvas in your preferred size. Draw a shape or some text on the canvas but don't 
                 set any colours yet.
             </p>
-            <p>Add two colour pickers using the <a href="https://p5js.org/reference/#/p5/createColorPicker" target="_blank"><code>createColourPicker()</code></a> 
+            <p>Add two colour pickers using the <a href="https://p5js.org/reference/p5/createColorPicker" target="_blank"><code>createColourPicker()</code></a> 
             function. Don't forget to save them both to global variables.</p>
             <p>The steps for positioning colour pickers are exactly the same as for buttons:
             </p>
@@ -39,7 +39,7 @@ colourPicker2.parent(container);</pre></li>
                 <pre>colourPicker1.position(0, 100);
 colourPicker2.position(width / 2, 100);</pre></li>
             </ol>
-            <p>Finally, use the <a href="https://p5js.org/reference/#/p5.Element/value" target="_blank"><code>value()</code></a> method to get the currently selected 
+            <p>Finally, use the <a href="https://p5js.org/reference/p5.Element/value" target="_blank"><code>value()</code></a> method to get the currently selected 
             colour of each colour picker and use them to set the background and fill colours of your sketch:</p>
             <pre>background(colourPicker1.value());
 fill(colourPicker2.value());</pre>
