@@ -1,4 +1,4 @@
-import { TestResults, advanceToFrame, getShapes, runMouseClick, canvasStatus } from "../../lib/test-utils.js";
+import { simulateMousePosition, TestResults, advanceToFrame, getShapes, runMouseClick, canvasStatus } from "https://cdn.jsdelivr.net/gh/Supportive-IDE/p5js-testing-demo@latest/p5jsTestingLibrary.js";
 
 /**
  * A hacky solution to wait for p5js to load the canvas. Include in all exercise test files.
@@ -57,7 +57,7 @@ async function runTests(canvas) {
         let actualShapes = getShapes();
         const loadShapeNumber = actualShapes.length;
         buttons[0].click();
-        advanceToFrame(frameCount + 1);
+        await advanceToFrame(frameCount + 1);
         for (const e of canvasStatus.errors) {
             TestResults.addFail(`In frame ${frameCount}, ${e}`);
         }
@@ -68,11 +68,12 @@ async function runTests(canvas) {
             TestResults.addFail("Clicking the button doesn't add any new shapes. Check that you have implemented an event handler and connected it to the button so that it is called when the button is clicked.");
         }
         const shapeCount = actualShapes.length;
-        mouseX = -1;
-        mouseY = -1;
+        // mouseX = -1;
+        // mouseY = -1;
+        simulateMousePosition(-1, -1);
         if (runMouseClick()) {
             TestResults.addWarning("A general mouse event function has been implemented. This is not necessary for this exercise. Make sure you have a mouse click listener attached to the button itself.");
-            advanceToFrame(frameCount + 1);
+            await advanceToFrame(frameCount + 1);
             for (const e of canvasStatus.errors) {
                 TestResults.addFail(`In frame ${frameCount}, ${e}`);
             }

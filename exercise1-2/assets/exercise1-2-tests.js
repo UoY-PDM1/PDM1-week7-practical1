@@ -1,4 +1,4 @@
-import { TestResults, advanceToFrame, canvasStatus, coloursMatch } from "../../lib/test-utils.js";
+import { TestResults, advanceToFrame, canvasStatus, coloursMatch } from "https://cdn.jsdelivr.net/gh/Supportive-IDE/p5js-testing-demo@latest/p5jsTestingLibrary.js";
 
 /**
  * A hacky solution to wait for p5js to load the canvas. Include in all exercise test files.
@@ -26,7 +26,7 @@ async function runTests(canvas) {
         const col2 = "#FF0000";
         picker1.value = col1;
         picker2.value = col2;
-        advanceToFrame(frameCount + 1);
+        await advanceToFrame(frameCount + 1);
         for (const e of canvasStatus.errors) {
             TestResults.addFail(`In frame ${frameCount}, ${e}`);
         }

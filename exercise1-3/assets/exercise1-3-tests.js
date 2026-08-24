@@ -1,4 +1,4 @@
-import { BACKGROUND, TestResults, advanceToFrame, getShapes, checkCanvasSize, coloursMatch, testSettingIsCalled, CIRCLE, canvasStatus } from "../../lib/test-utils.js";
+import { simulateMousePosition, BACKGROUND, TestResults, advanceToFrame, getShapes, checkCanvasSize, coloursMatch, testSettingIsCalled, SHAPE, canvasStatus } from "https://cdn.jsdelivr.net/gh/Supportive-IDE/p5js-testing-demo@latest/p5jsTestingLibrary.js";
 
 /**
  * A hacky solution to wait for p5js to load the canvas. Include in all exercise test files.
@@ -35,7 +35,7 @@ function shapeIsIn(shape, shapeArr) {
 }
 
 function shapesDrawnWithSettings(shapes, picker, slider, msg) {
-    const circlesAtMouse = shapes.filter(s => s.type === CIRCLE && s.x === mouseX && s.y === mouseY);
+    const circlesAtMouse = shapes.filter(s => s.type === SHAPE.CIRCLE && s.x === window.mock_mouseX && s.y === window.mock_mouseY);
     if (circlesAtMouse.length === 1) {
         TestResults.addPass(`${msg}, a circle is drawn at the mouse location.`);
         const isColour = picker === undefined ? false : coloursMatch(circlesAtMouse[0].fillColour, color(picker.value));
@@ -60,15 +60,16 @@ function shapesDrawnWithSettings(shapes, picker, slider, msg) {
     
 }
 
-function checkShapesAreDrawn(picker, slider, btn) {
+async function checkShapesAreDrawn(picker, slider, btn) {
     const startShapes = [...getShapes()];
-    mouseX = 100;
-    mouseY = 100;
-    mouseIsPressed = true;
+    // mouseX = 100;
+    // mouseY = 100;
+    simulateMousePosition(100, 100);
+    window.mock_mouseIsPressed = true;
     for (const e of canvasStatus.errors) {
         TestResults.addFail(`In frame ${frameCount}, ${e}`);
     }
-    advanceToFrame(frameCount + 1);
+    await advanceToFrame(frameCount + 1);
     for (const e of canvasStatus.errors) {
         TestResults.addFail(`In frame ${frameCount}, ${e}`);
     }
@@ -76,7 +77,7 @@ function checkShapesAreDrawn(picker, slider, btn) {
     // Need to separate the shapes that may be drawn for the controls e.g. panel background, text
     const newShapes = shapes2.filter(s => !shapeIsIn(s, startShapes));
     if (newShapes.length >= 1) {
-        shapesDrawnWithSettings(newShapes, picker, slider, `When the mouse is pressed at ${mouseX}, ${mouseY},`);
+        shapesDrawnWithSettings(newShapes, picker, slider, `When the mouse is pressed at ${window.mock_mouseX}, ${window.mock_mouseY},`);
         let msg = "When "
         if (picker) {
             picker.value = "#00CC00";
@@ -90,10 +91,11 @@ function checkShapesAreDrawn(picker, slider, btn) {
             msg += picker ? " and the slider value is changed" : "the slider value is changed";
         }
         msg += picker || slider ? " and the mouse is pressed at 105, 105, " : " the mouse is pressed at 105, 105, ";
-        mouseX = 105;
-        mouseY = 105;
-        mouseIsPressed = true;
-        advanceToFrame(frameCount + 1);
+        // mouseX = 105;
+        // mouseY = 105;
+        simulateMousePosition(105, 105);
+        window.mock_mouseIsPressed = true;
+        await advanceToFrame(frameCount + 1);
         for (const e of canvasStatus.errors) {
             TestResults.addFail(`In frame ${frameCount}, ${e}`);
         }
@@ -110,7 +112,7 @@ async function runTests(canvas) {
     canvas.style.pointerEvents = "none";
     const resultsDiv = document.getElementById("results");
     checkCanvasSize(800, 600);
-    if (testSettingIsCalled(BACKGROUND, false, true, false)) {
+    if (testSettingIsCalled(BACKGROUND.re, false, true, false)) {
         TestResults.addWarning("Unless it is in a conditional, calling <code>background()</code> in <code>draw()</code> will prevent shapes that are drawn from remaining visible on screen for more than one frame.");
     }
     // colour picker
@@ -121,13 +123,13 @@ async function runTests(canvas) {
     const buttons = document.getElementsByTagName("button");
     if (pickers.length === 1 && sliders.length === 1 && buttons.length === 1) {
         TestResults.addPass("The expected input controls are on the page.");    
-        checkShapesAreDrawn(pickers[0], sliders[0], buttons[0]);
+        await checkShapesAreDrawn(pickers[0], sliders[0], buttons[0]);
 
     } else {
         const hasPicker = checkControlType("colour picker", pickers);
         const hasSlider = checkControlType("slider", sliders);
         const hasButton = checkControlType("button", buttons);
-        checkShapesAreDrawn(hasPicker ? pickers[0]: undefined, hasSlider ? sliders[0]: undefined, hasButton ? buttons[0]: undefined);
+        await checkShapesAreDrawn(hasPicker ? pickers[0]: undefined, hasSlider ? sliders[0]: undefined, hasButton ? buttons[0]: undefined);
 
     }
     TestResults.display(resultsDiv);
